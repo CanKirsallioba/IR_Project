@@ -66,8 +66,10 @@ def compute_bm25_score(query, doc_idx):
     # Compute the document frequency for each term in the query
     df = doc_term_matrix[:, query_matrix.indices].sum(axis=0)
     # Compute the BM25 score for each term in the query
-    score = np.sum(np.log((metadata.shape[0] - df + 0.5) / (df + 0.5)) * ((k1 + 1) * tf) / (k1 * ((1 - b) + b * (dl / avg_doc_len)) + tf))
+    score = np.sum(np.log((metadata.shape[0] - df + 0.5) / (df + 0.5)) * (((k1 + 1) * tf) / ((k1 * ((1 - b) + b * (dl / avg_doc_len))) + tf)))
+
     return score
+
 
 # Define the query
 query = "COVID-19 pandemic"
