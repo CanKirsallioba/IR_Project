@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from tqdm import tqdm
 
 # Load the metadata.csv file using pandas
 metadata = pd.read_csv("metadata.csv", dtype={"abstract": str}, low_memory=False)
@@ -28,7 +29,7 @@ def preprocess_text(text):
         tokens = [token for token in tokens if token not in stop_words]
         # Stem the words
         stemmer = SnowballStemmer("english")
-        tokens = [stemmer.stem(token) for token in tokens]
+        tokens = [stemmer.stem(token) for token in tqdm(tokens)]
         # Join the tokens back into a string
         text = " ".join(tokens)
     else:
@@ -73,7 +74,7 @@ query = "COVID-19 pandemic"
 
 # Compute the BM25 score for each document
 bm25_scores = []
-for i in range(metadata.shape[0]):
+for i in tqdm(range(metadata.shape[0])):
     score = compute_bm25_score(query, i)
     bm25_scores.append(score)
 
