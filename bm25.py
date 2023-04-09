@@ -2,12 +2,26 @@ import pandas as pd
 import nltk
 import math
 import matplotlib.pyplot as plt
+from langdetect import detect, DetectorFactory
+
+DetectorFactory.seed = 0
 
 # Download the necessary NLTK resources
 nltk.download('punkt')
 
 # Read metadata.csv and use only the first 10,000 rows
 df = pd.read_csv('metadata.csv', nrows=10000)
+
+# Function to detect the language of the text
+def detect_language(text):
+    try:
+        return detect(text)
+    except:
+        return None
+
+# Remove non-English rows
+df['language'] = df['title'].apply(detect_language)
+df = df[df['language'] == 'en']
 
 # Define a function for preprocessing text
 def preprocess(text):
