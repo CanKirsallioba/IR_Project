@@ -2,6 +2,8 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 # Read metadata.csv into a pandas DataFrame
 df = pd.read_csv('metadata.csv')
@@ -46,3 +48,18 @@ if __name__ == "__main__":
     print(f"Top {top_n} results for the query '{query}':")
     for index, row in results.iterrows():
         print(f"\nTitle: {row['title']}\nAbstract: {row['abstract']}\nURL: {row['url']}")
+
+    # Call the search function to find the top results and compute the cosine similarity scores
+    top_indices = search(query, embeddings, top_n).index
+    cos_scores = torch.nn.functional.cosine_similarity(model.encode(query, convert_to_tensor=True), embeddings).cpu().numpy()
+    top_cos_scores = cos_scores[top_indices]
+
+    # Create a bar chart of the cosine similarity scores
+    plt.bar(results['title'], top_cos_scores)
+    plt.title(f"Cosine Similarity Scores for Query '{query}'")
+    plt.ylabel("Cosine Similarity Score")
+    plt.xticks(rotation=90)  # Rotate x-axis labels for readability
+    plt.show()
+
+
+

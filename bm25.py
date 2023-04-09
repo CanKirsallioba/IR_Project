@@ -1,6 +1,7 @@
 import pandas as pd
 import nltk
 import math
+import matplotlib.pyplot as plt
 
 # Download the necessary NLTK resources
 nltk.download('punkt')
@@ -67,16 +68,30 @@ def search(query, tokenized_corpus, top_n=10):
     # Get the indices of the top n scores in descending order
     top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_n]
 
-    # Return the DataFrame rows corresponding to the top n scores
-    return df.iloc[top_indices]
+    # Get the BM25 scores of the top n documents
+    top_scores = [scores[i] for i in top_indices]
 
-# Perform a query
+    # Return the DataFrame rows and scores corresponding to the top n scores
+    return df.iloc[top_indices], top_scores
+
+
 if __name__ == "__main__":
     query = input("Please enter your query: ")
     top_n = 10
-    results = search(query, tokenized_corpus, top_n)
+    results, scores = search(query, tokenized_corpus, top_n)
 
-    # Print the top results to the console
+    # Print the top results and scores to the console
     print(f"Top {top_n} results for the query '{query}':")
-    for index, row in results.iterrows():
-        print(f"\nTitle: {row['title']}\nAbstract: {row['abstract']}\nURL: {row['url']}")
+    for result_index, (index, row) in enumerate(results.iterrows()):
+        print(f"\nTitle: {row['title']}\nAbstract: {row['abstract']}\nURL: {row['url']}\nScore: {scores[result_index]}")
+
+    # Create a bar chart of the BM25 scores
+    fig, ax = plt.subplots()
+    ax.bar(range(len(scores)), scores)
+    ax.set_xticks(range(len(results)))
+    ax.set_xticklabels([row['title'] for index, row in results.iterrows()], rotation=90)
+    ax.set_title(f"Top {top_n} Results for the Query '{query}'")
+    ax.set_xlabel("Document")
+    ax.set_ylabel("BM25 Score")
+    plt.show()
+
