@@ -27,7 +27,7 @@ def search(query, embeddings, top_n=10):
 
 
 if __name__ == "__main__":
-    query = "COVID-19 transmission"
+    query = input("Please enter your query: ")
     top_n = 10
     results = search(query, embeddings, top_n)
 

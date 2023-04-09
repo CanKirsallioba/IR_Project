@@ -58,7 +58,7 @@ def search(query, tokenized_corpus, top_n=10):
 
 # Perform a query
 if __name__ == "__main__":
-    query = "COVID-19 transmission"
+    query = input("Please enter your query: ")
     top_n = 10
     results = search(query, tokenized_corpus, top_n)
 
