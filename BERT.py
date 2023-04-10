@@ -14,6 +14,9 @@ df = df.head(10000)
 # Drop rows with NaN values in the 'abstract' column
 df = df.dropna(subset=['abstract'])
 
+# Replace cells with NaN values in the 'title' column with ''. We maintain these rows as documents' contents are a priority.
+df['title'] = df['title'].fillna('')
+
 DetectorFactory.seed = 0
 
 # Function to detect the language of the text
@@ -27,14 +30,14 @@ def detect_language(text):
 df['language'] = df['title'].apply(detect_language)
 df = df[df['language'] == 'en']
 
-# Concatenate the title and abstract columns to form a new column called 'full_text'
-df['full_text'] = df['title'].fillna('') + ' ' + df['abstract'].fillna('')
+# Concatenate the title and abstract columns to form a new column called 'title_abstract'
+df['title_abstract'] = df['title'] + ' ' + df['abstract']
 
 # Load a pre-trained BERT model
 model = SentenceTransformer('distilbert-base-nli-stsb-mean-tokens')
 
 # Generate sentence embeddings for each full text in the DataFrame
-embeddings = model.encode(df['full_text'].tolist(), convert_to_tensor=True)
+embeddings = model.encode(df['title_abstract'].tolist(), convert_to_tensor=True)
 
 # Define a function for searching the DataFrame using a query string
 def search(query, embeddings, top_n=10):
