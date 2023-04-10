@@ -74,8 +74,8 @@ if __name__ == "__main__":
     df_scores_sorted = df_scores.sort_values('Scores')
 
     # Create a bar chart of the cosine similarity scores for the top 10 results
-    plt.barh("Titles", "Scores", data = df_scores_sorted)
-    plt.title(f"Cosine Similarity Scores for Query '{query}'")
+    plt.barh("Titles", "Scores", data = df_scores_sorted, height = 0.4)
+    plt.title(f"Top 10 Cosine Similarity Scores for Query '{query}'")
     plt.xlabel("Cosine Similarity Score")
     plt.xticks() 
     plt.show()
