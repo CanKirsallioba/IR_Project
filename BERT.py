@@ -11,6 +11,9 @@ df = pd.read_csv('metadata.csv')
 # Use only a portion of the dataset (e.g., first 10,000 rows)
 df = df.head(10000)
 
+# Drop rows with NaN values in the 'abstract' column
+df = df.dropna(subset=['abstract'])
+
 DetectorFactory.seed = 0
 
 # Function to detect the language of the text
