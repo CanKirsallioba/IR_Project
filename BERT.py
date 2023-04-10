@@ -57,22 +57,23 @@ if __name__ == "__main__":
     # Call the search function to find the top results
     results = search(query, embeddings, top_n)
     
-    # Call the search function to find the top results and compute the cosine similarity scores
-    top_indices = search(query, embeddings, top_n).index
+    # Compute the cosine similarity scores and take the ones corresponding to the top 10 results
     cos_scores = torch.nn.functional.cosine_similarity(model.encode(query, convert_to_tensor=True), embeddings).cpu().numpy()
+    top_indices = cos_scores.argsort()[-top_n:][::-1]
     top_cos_scores = cos_scores[top_indices]
+    print(f"\nThe scores array for the top ten results: {top_cos_scores}")
 
-    # Print the top results to the console
-    print(f"Top {top_n} results for the query '{query}':")
+    # Print the top results to the console alongside the scores
+    print(f"\nTop {top_n} results for the query '{query}':")
     for (index, row), score in zip(results.iterrows(), top_cos_scores):
         print(f"\nScore: {score}")
-        print(f"Title: {row['title']}\nAbstract: {row['abstract']}\nURL: {row['url']}")
+        print(f"\nTitle: {row['title']}\nAbstract: {row['abstract']}\nURL: {row['url']}")
         
-    # Create Pandas dataframe from two lists
+    # Create a Pandas dataframe from the Titles and Scores for the top 10 results
     df_scores = pd.DataFrame({"Titles":results['title'], "Scores":top_cos_scores})
     df_scores_sorted = df_scores.sort_values('Scores')
 
-    # Create a bar chart of the cosine similarity scores
+    # Create a bar chart of the cosine similarity scores for the top 10 results
     plt.barh("Titles", "Scores", data = df_scores_sorted)
     plt.title(f"Cosine Similarity Scores for Query '{query}'")
     plt.xlabel("Cosine Similarity Score")
