@@ -3,7 +3,6 @@ import nltk
 import math
 import matplotlib.pyplot as plt
 from langdetect import detect, DetectorFactory
-import numpy as np
 
 DetectorFactory.seed = 0
 
@@ -78,20 +77,16 @@ def search(query, tokenized_corpus, top_n=10):
     query_tokens = preprocess(query)
 
     # Compute the BM25 scores between the query and each document in the corpus
-    scores = np.array([bm25(query_tokens, doc_tokens, tokenized_corpus) for doc_tokens in tokenized_corpus])
+    scores = [bm25(query_tokens, doc_tokens, tokenized_corpus) for doc_tokens in tokenized_corpus]
 
-    # Normalize the scores
-    max_score = np.max(scores)
-    normalized_scores = scores / max_score
-
-    # Get the indices of the top n normalized scores in descending order
-    top_indices = sorted(range(len(normalized_scores)), key=lambda i: normalized_scores[i], reverse=True)[:top_n]
+    # Get the indices of the top n scores in descending order
+    top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_n]
 
     # Get the BM25 scores of the top n documents
-    top_normalized_scores = [normalized_scores[i] for i in top_indices]
+    top_scores = [scores[i] for i in top_indices]
 
     # Return the DataFrame rows and scores corresponding to the top n scores
-    return df.iloc[top_indices], top_normalized_scores
+    return df.iloc[top_indices], top_scores
 
 
 if __name__ == "__main__":
