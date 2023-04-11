@@ -2,8 +2,8 @@
 
 This repository contains two Python scripts for search and retrieval:
 
-    search_bm25.py: Uses BM25 to retrieve the most relevant results from a given query
-    search_bert.py: Uses BERT to encode documents and retrieve the most similar results to a given query
+    bm25.py: Uses BM25 to retrieve the most relevant results from a given query
+    bert.py: Uses BERT to encode documents and retrieve the most similar results to a given query
 
 ## Dependencies
 
