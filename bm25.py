@@ -10,9 +10,6 @@ from nltk.stem import SnowballStemmer
 
 DetectorFactory.seed = 0
 
-# Download the necessary NLTK resources
-nltk.download('punkt')
-
 # Read metadata.csv and use only the first 10,000 rows
 df = pd.read_csv('metadata.csv', nrows=10000)
 
