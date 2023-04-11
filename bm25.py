@@ -3,6 +3,10 @@ import nltk
 import math
 import matplotlib.pyplot as plt
 from langdetect import detect, DetectorFactory
+nltk.download('punkt')
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+from nltk.stem import SnowballStemmer
 
 DetectorFactory.seed = 0
 
@@ -26,7 +30,20 @@ df = df[df['language'] == 'en']
 # Define a function for preprocessing text
 def preprocess(text):
     # Tokenize the text into words and convert to lowercase
-    return nltk.word_tokenize(text.lower())
+    word_tokens = nltk.word_tokenize(text.lower())
+
+    # Remove punctuation
+    word_tokens_punct = [word for word in word_tokens if word.isalpha()]
+
+    # Remove stopwords
+    stop_words = set(stopwords.words('english'))
+    removing_stopwords = [word for word in word_tokens_punct if word not in stop_words]
+
+    # Apply stemming
+    stemmer = SnowballStemmer("english")
+    stemmed_tokens = [stemmer.stem(word) for word in removing_stopwords]
+
+    return stemmed_tokens
 
 # Tokenize the title and abstract columns of the DataFrame
 tokenized_corpus = []
