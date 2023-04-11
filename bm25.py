@@ -3,12 +3,12 @@ import nltk
 import math
 import matplotlib.pyplot as plt
 from langdetect import detect, DetectorFactory
-nltk.download('punkt')
-nltk.download('stopwords')
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
+import numpy as np
 
 DetectorFactory.seed = 0
+
+# Download the necessary NLTK resources
+nltk.download('punkt')
 
 # Read metadata.csv and use only the first 10,000 rows
 df = pd.read_csv('metadata.csv', nrows=10000)
@@ -27,20 +27,7 @@ df = df[df['language'] == 'en']
 # Define a function for preprocessing text
 def preprocess(text):
     # Tokenize the text into words and convert to lowercase
-    word_tokens = nltk.word_tokenize(text.lower())
-
-    # Remove punctuation
-    word_tokens_punct = [word for word in word_tokens if word.isalpha()]
-
-    # Remove stopwords
-    stop_words = set(stopwords.words('english'))
-    removing_stopwords = [word for word in word_tokens_punct if word not in stop_words]
-
-    # Apply stemming
-    stemmer = SnowballStemmer("english")
-    stemmed_tokens = [stemmer.stem(word) for word in removing_stopwords]
-
-    return stemmed_tokens
+    return nltk.word_tokenize(text.lower())
 
 # Tokenize the title and abstract columns of the DataFrame
 tokenized_corpus = []
@@ -91,16 +78,20 @@ def search(query, tokenized_corpus, top_n=10):
     query_tokens = preprocess(query)
 
     # Compute the BM25 scores between the query and each document in the corpus
-    scores = [bm25(query_tokens, doc_tokens, tokenized_corpus) for doc_tokens in tokenized_corpus]
+    scores = np.array([bm25(query_tokens, doc_tokens, tokenized_corpus) for doc_tokens in tokenized_corpus])
 
-    # Get the indices of the top n scores in descending order
-    top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_n]
+    # Normalize the scores
+    max_score = np.max(scores)
+    normalized_scores = scores / max_score
+
+    # Get the indices of the top n normalized scores in descending order
+    top_indices = sorted(range(len(normalized_scores)), key=lambda i: normalized_scores[i], reverse=True)[:top_n]
 
     # Get the BM25 scores of the top n documents
-    top_scores = [scores[i] for i in top_indices]
+    top_normalized_scores = [normalized_scores[i] for i in top_indices]
 
     # Return the DataFrame rows and scores corresponding to the top n scores
-    return df.iloc[top_indices], top_scores
+    return df.iloc[top_indices], top_normalized_scores
 
 
 if __name__ == "__main__":
