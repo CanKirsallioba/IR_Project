@@ -10,7 +10,7 @@ In addition, the following notebooks serve as supplements to the .py files:
     datasets_construction.ipynb: Construction of two datasets(10000 rows and 20000 rows) from the CORD-19 corpus.
     10000_BM25.ipynb: A walk-through of the engine implementation based on 10000 rows and BM25 model.
     20000_BM25.ipynb: A walk-through of the engine implementation based on 20000 rows and BERT model.
-    10000_BM25.ipynb: A walk-through of the engine implementation based on 10000 rows and BM25 model.
+    10000_BERT.ipynb: A walk-through of the engine implementation based on 10000 rows and BM25 model.
     20000_BERT.ipynb: A walk-through of the engine implementation based on 20000 rows and BERT model.
 
 ## Dependencies
